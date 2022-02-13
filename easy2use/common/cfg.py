@@ -1,3 +1,4 @@
+import re
 from six.moves import configparser
 
 
@@ -91,10 +92,14 @@ class OptGroup(object):
         self._options[opt.name] = opt
 
     def __getattr__(self, name):
-        if name in self._options:
-            return self._options[name].value
-        else:
+        if name not in self._options:
             raise Exception('No such option: {}'.format(name))
+        _value = self._options[name].value
+        if isinstance(_value, str):
+            opts = re.findall(r'\{([a-z_]*)\}', _value)
+            values = {opt: self._options[opt].value for opt in opts}
+            _value = _value.format(**values)
+        return _value
 
     def options(self):
         return self._options.keys()
