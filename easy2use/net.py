@@ -3,8 +3,8 @@ from concurrent import futures
 import re
 import socket
 
-from etou import executor
-from etou import system
+from easy2use import executor
+from easy2use import system
 
 ScanResult = namedtuple('ScanResult', 'host port connectable')
 

@@ -11,7 +11,7 @@ try:
 except ImportError:
     is_support_tqdm = False
 
-from etou import date
+from easy2use import date
 
 from . import log
 

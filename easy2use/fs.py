@@ -5,8 +5,8 @@ import os
 import zipfile
 import contextlib
 
-from etou.common import log
-from etou.system import OS
+from easy2use.common import log
+from easy2use.system import OS
 
 LOG = log.getLogger(__name__)
 

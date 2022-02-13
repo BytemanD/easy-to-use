@@ -5,9 +5,9 @@ import urllib3
 
 import bs4
 
-from etou.common import log
-from etou.common import progressbar
-from etou.downloader import driver
+from easy2use.common import log
+from easy2use.common import progressbar
+from easy2use.downloader import driver
 
 LOG = log.getLogger(__name__)
 

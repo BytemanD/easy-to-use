@@ -2,9 +2,9 @@ import json
 import subprocess
 from gevent import pywsgi
 
-from etou.common import log
-from etou import net
-from etou.system import OS
+from easy2use.common import log
+from easy2use import net
+from easy2use.system import OS
 
 LOG = log.getLogger(__name__)
 

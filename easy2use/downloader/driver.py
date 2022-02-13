@@ -1,7 +1,7 @@
 import abc
 from concurrent import futures
 
-from etou.common import log
+from easy2use.common import log
 
 LOG = log.getLogger(__name__)
 DEFAULT_WORKERS = 10

@@ -3,7 +3,7 @@ import os
 
 import paramiko
 
-from etou.common import log
+from easy2use.common import log
 
 LOG = log.getLogger(__name__)
 

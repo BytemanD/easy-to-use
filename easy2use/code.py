@@ -3,7 +3,7 @@ import io
 import os
 import random
 
-from etou.common import progressbar
+from easy2use.common import progressbar
 
 LOWER = 'abcdefghijklmnopqrstuvwxyz'
 UPPER = 'abcdefghijklmnopqrstuvwxyz'.upper()

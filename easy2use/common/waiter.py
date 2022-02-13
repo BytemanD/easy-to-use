@@ -1,9 +1,9 @@
 import time
 
-from etou.common import log
+from easy2use.common import log
 
-from etou.common import config
-from etou.common import exceptions
+from easy2use.common import config
+from easy2use.common import exceptions
 
 CONF = config.CONF
 LOG = log.getLogger(__name__)

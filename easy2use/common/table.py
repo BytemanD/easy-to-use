@@ -1,5 +1,5 @@
 from __future__ import print_function
-from etou.common import colorstr
+from easy2use.common import colorstr
 
 
 class SimpleTable(object):

@@ -1,6 +1,6 @@
 from six.moves import urllib_parse
 
-from etou.http import httpclient
+from easy2use.http import httpclient
 
 
 class InfluxDBClient(httpclient.RestClient):

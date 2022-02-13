@@ -4,8 +4,8 @@ import flask
 from flask import views
 from gevent import pywsgi
 
-from etou import net
-from etou.common import log
+from easy2use import net
+from easy2use.common import log
 
 LOG = log.getLogger(__name__)
 ROUTE = os.path.dirname(os.path.abspath(__file__))
