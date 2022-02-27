@@ -13,7 +13,7 @@ PURLE_BACKGROUPD = 45
 
 
 def make_str(style, content):
-    return '\033[1;{}m{}\033[0m'.format(style, content)
+    return '\033[{}m{}\033[0m'.format(style, content)
 
 
 class WhiteStr(object):
@@ -24,6 +24,9 @@ class WhiteStr(object):
 
     def __str__(self):
         return make_str(self.style, self.content)
+
+    def __add__(self, other):
+        return self.__str__() + str(other)
 
 
 class RedStr(WhiteStr):
