@@ -109,6 +109,11 @@ class SSHClient(object):
         sftp = self.client.open_sftp()
         sftp.putfo(fl, remotepath, file_size, callback=callback, confirm=True)
 
+    def getfo(self, remotepath, fl, callback=None):
+        self._connect()
+        sftp = self.client.open_sftp()
+        sftp.getfo(remotepath, fl, callback=callback)
+
 
 def run_cmd_on_host(request):
     ssh_client = SSHClient(request.host, request.user, request.password,
