@@ -56,7 +56,8 @@ class ProgressWithPrint(ProgressNoop):
     def _print_progress(self):
         percent = self.progress['completed'] * 100 / self.progress['total']
         print(self.progress_format.format(
-            date.parse_timestamp2str(time.time()), percent, '#' * percent))
+            date.parse_timestamp2str(time.time()), percent,
+            '#' * int(percent)))
 
 
 class ProgressWithTqdm(ProgressNoop):

@@ -4,6 +4,7 @@ import re
 import urllib3
 
 import bs4
+from six.moves import urllib_parse
 
 from easy2use.common import log
 from easy2use.common import progressbar
@@ -62,17 +63,36 @@ class Urllib3Driver(driver.BaseDownloadDriver):
     def download(self, url):
         file_name = os.path.basename(url)
         resp = self.http.request('GET', url, preload_content=False)
+        LOG.debug('get resp for url %s', url)
         if self.progress:
-            pbar = progressbar.factory(int(resp.headers.get('Content-Length')))
+            size = resp.headers.get('Content-Length')
+            pbar = size and progressbar.factory(int(size)) or \
+                progressbar.ProgressNoop(0)
             desc_template = '{{:{}}}'.format(self.filename_length)
             pbar.set_description(desc_template.format(file_name))
         else:
-            pbar = progressbar.ProgressNoop()
+            pbar = progressbar.ProgressNoop(0)
 
-        save_path = os.path.join(self.download_dir, file_name)
-        with open(save_path, 'wb') as f:
-            for data in resp.stream(io.DEFAULT_BUFFER_SIZE):
-                f.write(data)
-                pbar.update(len(data))
-        pbar.close()
-        return file_name
+        if not self.keep_full_path:
+            save_path = os.path.join(self.download_dir, file_name)
+        else:
+            # TODO Need to be rigorously tested.
+            splited = urllib_parse.urlsplit(url).path.split('/')
+            save_dir = os.path.join(self.download_dir,
+                                    os.path.join(*splited[1:-1]))
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+            save_path = os.path.join(save_dir, file_name)
+        try:
+            
+            with open(save_path, 'wb') as f:
+                for data in resp.stream(io.DEFAULT_BUFFER_SIZE):
+                    f.write(data)
+                    pbar.update(len(data))
+        except Exception as e:
+            LOG.error('download %s failed %s', file_name, e)
+            if os.path.exists(save_path):
+                os.remove(save_path)
+        finally:
+            pbar.close()
+            return file_name
