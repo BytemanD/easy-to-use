@@ -16,6 +16,7 @@ class UnknownException(Exception):
             self._message.format(**kwargs)
         )
 
+
 class HTTPException(UnknownException):
     _message = 'Unknown Http Exception'
 
@@ -93,7 +94,7 @@ class RestClient(object):
         if self.scheme == 'https':
             ssl._create_default_https_context = ssl._create_unverified_context
             self.connection = http_client.HTTPSConnection(self.host, self.port,
-                                                      timeout=self.timeout)
+                                                          timeout=self.timeout)
         else:
             self.connection = http_client.HTTPConnection(self.host, self.port,
                                                          timeout=self.timeout)

@@ -1,12 +1,6 @@
 import time
 
-from easy2use.common import log
-
-from easy2use.common import config
 from easy2use.common import exceptions
-
-CONF = config.CONF
-LOG = log.getLogger(__name__)
 
 
 class Waiter(object):

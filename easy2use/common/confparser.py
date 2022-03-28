@@ -11,7 +11,7 @@ class ConfigParserWrapper(object):
 
     def defaults(self):
         if self._defaults is None:
-            self._defaults =  self._parser.defaults()
+            self._defaults = self._parser.defaults()
         return self._defaults
 
     def read(self, file):

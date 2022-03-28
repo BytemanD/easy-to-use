@@ -84,7 +84,6 @@ class Urllib3Driver(driver.BaseDownloadDriver):
                 os.makedirs(save_dir)
             save_path = os.path.join(save_dir, file_name)
         try:
-            
             with open(save_path, 'wb') as f:
                 for data in resp.stream(io.DEFAULT_BUFFER_SIZE):
                     f.write(data)

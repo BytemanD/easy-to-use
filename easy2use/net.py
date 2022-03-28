@@ -67,7 +67,7 @@ def get_ip_addresses(v4=True, v6=False):
 
 def split_host_port(address, default_host=None, default_port=None):
     """Split address to host port
-    The format of address like: 
+    The format of address like:
         host1, host1:8888, 1.1.1.1, 1.1.1.1:8888, :8888
 
     >>> split_host_port('host1:8888')

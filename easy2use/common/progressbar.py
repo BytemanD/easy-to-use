@@ -1,6 +1,6 @@
 """
 Module tqdm wrapper
-Prevent throwing exceptions due to import failure 
+Prevent throwing exceptions due to import failure
 """
 from __future__ import print_function
 import time
@@ -61,7 +61,7 @@ class ProgressWithPrint(ProgressNoop):
 
 
 class ProgressWithTqdm(ProgressNoop):
-    
+
     def __init__(self, *args, **kwargs):
         self.pbar = tqdm(*args, **kwargs)
 

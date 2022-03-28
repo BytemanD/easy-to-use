@@ -35,7 +35,8 @@ class BaseWsgiApp(object):
         self.environ = environ
         if self.method not in DEFUALT_METHOD_STATUS:
             start_response('404', [])
-            return ['method {} is not supported for this server'.format(self.method).encode()]
+            return ['method {} is not supported for this server'.format(
+                self.method).encode()]
         func = getattr(self, 'do_{}'.format(self.method), None)
         resp = func(environ, start_response)
         response_headers = [('Content-Type', 'application/json')]
@@ -77,15 +78,14 @@ class BaseWsgiApp(object):
 
 
 class CmdServer(BaseWsgiApp):
-    
+
     def get(self):
         uname = OS.uname()
         resp_body = {'system': uname.system,
                      'version': uname.version,
                      'machine': uname.machine,
                      'processor': uname.processor,
-                     'release': uname.release
-        }
+                     'release': uname.release}
         return '200 OK', json.dumps(resp_body)
 
     def post(self, data):
