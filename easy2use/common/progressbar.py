@@ -11,9 +11,8 @@ try:
 except ImportError:
     is_support_tqdm = False
 
+from easy2use.cores import log
 from easy2use import date
-
-from . import log
 
 LOG = log.getLogger(__name__)
 

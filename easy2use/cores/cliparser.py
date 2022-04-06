@@ -2,7 +2,7 @@ import sys
 import argparse
 import logging
 
-from easy2use.common import log
+from easy2use.cores import log
 
 LOG = log.getLogger(__name__)
 
@@ -17,12 +17,7 @@ class Argument(object):
 class CliBase(object):
     """Add class property NAME to set subcommaon name
     """
-    BASE_ARGUMENTS = [
-        Argument('-d', '--debug', action='store_true',
-                 help='show debug messages'),
-        Argument('-v', '--verbose', action='store_true',
-                 help='show verbose messages'),
-    ]
+    BASE_ARGUMENTS = log.get_args()
     ARGUMENTS = []
 
     def __call__(self, args):
@@ -45,9 +40,15 @@ class SubCliParser(object):
         if not hasattr(self._args, 'cli'):
             self.print_usage()
             sys.exit(1)
-        if hasattr(self._args, 'debug') and self._args.debug:
-            log.set_default(level=logging.DEBUG)
-        LOG.debug('args is %s', self._args)
+        log_config = {}
+        if self._args.debug:
+            log_config['level'] = logging.DEBUG
+
+        log_config['filename'] = self._args.log_file
+        log_config['max_mb'] = self._args.max_mb
+        log_config['backup_count'] = self._args.backup_count
+        log.basic_config(**log_config)
+
         return self._args
 
     def call(self):

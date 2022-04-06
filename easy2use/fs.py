@@ -1,11 +1,11 @@
 import contextlib
 import fnmatch
 import io
+import itertools
 import os
 import zipfile
-import contextlib
 
-from easy2use.common import log
+from easy2use.cores import log
 from easy2use.system import OS
 
 LOG = log.getLogger(__name__)
@@ -25,8 +25,8 @@ def remove(path, recursive=False):
     if os.path.isfile(path) or not recursive:
         os.remove(path)
     else:
-        for p in os.listdir(path):
-            remove(os.path.join(path, p), recursive=recursive)
+        for dir in os.listdir(path):
+            remove(os.path.join(path, dir), recursive=recursive)
         os.rmdir(path)
 
 
@@ -111,6 +111,28 @@ def zip_files(path, name=None, zip_path=True, zip_root=True, save_path=None,
                 arcname = f if zip_path else f[len(path):]
             zfile.write(f, arcname=arcname)
     return zip_name
+
+
+def unzip(file_path, save_path=None):
+    """Unzip directory use zipfile libriary
+    """
+    if not zipfile.is_zipfile(file_path):
+        raise RuntimeError('%s is not zipfile' % file_path)
+
+    unzip_name = os.path.splitext(os.path.basename(file_path))[0]
+    index = itertools.count(1)
+    if not save_path:
+        save_path = os.path.dirname(file_path)
+
+    unzip_path = os.path.join(save_path, unzip_name)
+    if os.path.exists(unzip_path):
+        while True:
+            unzip_path = os.path.join(save_path,
+                                      '{}_{}'.format(unzip_name, next(index)))
+            if not os.path.exists(unzip_path):
+                break
+    with zipfile.ZipFile(file_path, 'r') as zfile:
+        zfile.extractall(path=unzip_path)
 
 
 def find(path, pattern):

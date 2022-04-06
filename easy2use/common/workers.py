@@ -2,7 +2,6 @@ from concurrent import futures
 
 
 def run_concurrent(fn, maps=None, nums=None, max_workers=None):
-
     with futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         if maps:
             tasks = executor.map(fn, maps)

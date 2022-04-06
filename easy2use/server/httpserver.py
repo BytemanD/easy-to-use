@@ -4,8 +4,8 @@ import flask
 from flask import views
 from gevent import pywsgi
 
+from easy2use.cores import log
 from easy2use import net
-from easy2use.common import log
 
 LOG = log.getLogger(__name__)
 ROUTE = os.path.dirname(os.path.abspath(__file__))
@@ -31,7 +31,7 @@ class IndexView(views.MethodView):
         return INDEX_HTML
 
 
-class WsgiServer(object):
+class WsgiServer:
     RULES = [(r'/', IndexView.as_view('index')), ]
 
     def __init__(self, name, host=None, port=80, template_folder=None,
@@ -46,8 +46,8 @@ class WsgiServer(object):
         if secret_key:
             self.app.config['SECRET_KEY'] = secret_key
         if converters_ext:
-            for name, cls in converters_ext:
-                self.app.url_map.converters[name] = cls
+            for ext_name, cls in converters_ext:
+                self.app.url_map.converters[ext_name] = cls
 
         self._register_rules()
 
@@ -56,21 +56,26 @@ class WsgiServer(object):
         self.app.config['SERVER_NAME'] = '{}:{}'.format(self.host, self.port)
 
         self.app.before_request(self.before_request)
+        self.server = None
 
     def before_request(self):
         """Do someting here before reqeust"""
-        pass
+        return
 
     def _register_rules(self):
         LOG.debug('register rules')
         for url, view_func in self.RULES:
             self.app.add_url_rule(url, view_func=view_func)
 
-    def start(self, develoment=False, debug=False, use_reloader=False):
+    def start(self, develoment=False, use_reloader=False):
         LOG.info('strarting server: http://%s:%s', self.host, self.port)
         if develoment:
-            self.app.run(host=self.host, port=self.port, debug=debug,
+            self.app.run(host=self.host, port=self.port, debug=True,
                          use_reloader=use_reloader)
         else:
-            server = pywsgi.WSGIServer((self.host, self.port), self.app)
-            server.serve_forever()
+            self.server = pywsgi.WSGIServer((self.host, self.port), self.app)
+            self.server.serve_forever()
+
+    def stop(self):
+        if self.server:
+            self.server.stop()

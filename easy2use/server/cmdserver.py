@@ -2,7 +2,7 @@ import json
 import subprocess
 from gevent import pywsgi
 
-from easy2use.common import log
+from easy2use.cores import log
 from easy2use import net
 from easy2use.system import OS
 
@@ -106,7 +106,7 @@ def main():
     host, port = net.split_host_port(address,
                                      default_host=net.get_internal_ip(),
                                      default_port=8888)
-    log.enable_debug()
+
     LOG.info('start server at %s:%s', host, port)
     server = pywsgi.WSGIServer((host, port), CmdServer())
     server.serve_forever()

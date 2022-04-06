@@ -2,11 +2,11 @@ import io
 import os
 import re
 import urllib3
+from urllib import parse as urllib_parse
 
 import bs4
-from six.moves import urllib_parse
 
-from easy2use.common import log
+from easy2use.cores import log
 from easy2use.common import progressbar
 from easy2use.downloader import driver
 

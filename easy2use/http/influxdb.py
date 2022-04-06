@@ -1,4 +1,4 @@
-from six.moves import urllib_parse
+from urllib import parse as urllib_parse
 
 from easy2use.http import httpclient
 

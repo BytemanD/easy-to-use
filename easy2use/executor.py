@@ -3,7 +3,7 @@ import locale
 import subprocess
 from collections import namedtuple
 
-from easy2use.common import log
+from easy2use.cores import log
 
 LOG = log.getLogger(__name__)
 

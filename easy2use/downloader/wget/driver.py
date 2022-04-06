@@ -1,6 +1,6 @@
 import os
 
-from easy2use.common import log
+from easy2use.cores import log
 from easy2use.downloader import driver
 
 LOG = log.getLogger(__name__)

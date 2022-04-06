@@ -1,9 +1,9 @@
 import json
 import ssl
 
-from six.moves import http_client
+from http import client as http_client
 
-from easy2use.common import log
+from easy2use.cores import log
 
 LOG = log.getLogger(__name__)
 

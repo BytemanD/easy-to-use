@@ -1,5 +1,5 @@
 import re
-from six.moves import configparser
+import configparser
 
 
 class Option(object):
