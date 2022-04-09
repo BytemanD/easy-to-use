@@ -1,11 +1,9 @@
 import collections
+import contextlib
 import os
 import platform
-try:
+with contextlib.suppress(ImportError):
     import psutil
-except ImportError:
-    pass
-
 cpu_count = collections.namedtuple('cpu_count', 'phy_core v_core')
 
 
@@ -93,8 +91,5 @@ class Net:
 
 
 def get_pip_path():
-    if OS.is_windows():
-        pip_conf = os.path.join(os.path.expanduser('~'), 'pip', 'pip.ini')
-    else:
-        pip_conf = os.path.join(os.path.expanduser('~'), '.pip', 'pip.conf')
-    return pip_conf
+    pip_paths = ['pip', 'pip.ini'] if OS.is_windows() else ['.pip', 'pip.conf']
+    return os.path.join(os.path.expanduser('~'), *pip_paths)

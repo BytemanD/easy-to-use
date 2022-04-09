@@ -68,7 +68,7 @@ def convert_base(src_number, target_base, src_base=None):
     'b'
     """
     if target_base not in base_func:
-        raise ValueError('Only support base: %s' % base_func.keys())
+        raise ValueError(f'Only support base: {base_func.keys()}')
     if src_base is None:
         if isinstance(src_number, int):
             src_base = 10
@@ -79,11 +79,8 @@ def convert_base(src_number, target_base, src_base=None):
 
     # NOTE int() fist arg must be string
     base10 = int(str(src_number), src_base)
-    target_num = base_func.get(target_base)(base10)
-    if target_num[:2] in ['0b', '0x', '0o']:
-        return target_num[2:]
-    else:
-        return target_num
+    result = base_func.get(target_base)(base10)
+    return result[2:] if result[:2] in ['0b', '0x', '0o'] else result
 
 
 def random_password(lower=4, upper=None, number=None, special=None):

@@ -8,11 +8,16 @@ import bs4
 
 from easy2use.cores import log
 from easy2use.common import progressbar
+from easy2use.common import exceptions
 from easy2use.downloader import driver
 
 LOG = log.getLogger(__name__)
 
 FILE_NAME_MAX_SIZE = 50
+
+
+class GetPageFailed(exceptions.BaseException):
+    _msg = 'get web page failed, {error}'
 
 
 def find_links(url, link_regex=None, headers=None):
@@ -23,13 +28,10 @@ def find_links(url, link_regex=None, headers=None):
     httpclient = urllib3.PoolManager(headers=headers)
     resp = httpclient.request('GET', url)
     if resp.status != 200:
-        raise Exception('get web page failed, %s' % resp.data)
+        raise GetPageFailed(error=resp.data)
     html = bs4.BeautifulSoup(resp.data, features="html.parser")
     img_links = []
-    if link_regex:
-        regex_obj = re.compile(link_regex)
-    else:
-        regex_obj = None
+    regex_obj = re.compile(link_regex) if link_regex else None
     for link in html.find_all(name='a'):
         if not link.get('href'):
             continue
@@ -68,7 +70,7 @@ class Urllib3Driver(driver.BaseDownloadDriver):
             size = resp.headers.get('Content-Length')
             pbar = size and progressbar.factory(int(size)) or \
                 progressbar.ProgressNoop(0)
-            desc_template = '{{:{}}}'.format(self.filename_length)
+            desc_template = f'{{:{self.filename_length}}}'
             pbar.set_description(desc_template.format(file_name))
         else:
             pbar = progressbar.ProgressNoop(0)

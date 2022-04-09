@@ -78,6 +78,5 @@ class ProgressWithTqdm(ProgressNoop):
 def factory(total):
     if is_support_tqdm:
         return ProgressWithTqdm(total=total)
-    else:
-        LOG.warning('tqdm is not installed, use ProgressWithPrint')
-        return ProgressWithPrint(total=total)
+    LOG.warning('tqdm is not installed, use ProgressWithPrint')
+    return ProgressWithPrint(total=total)

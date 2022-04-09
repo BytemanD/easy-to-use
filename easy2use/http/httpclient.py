@@ -1,6 +1,7 @@
+import imp
+import contextlib
 import json
 import ssl
-
 from http import client as http_client
 
 from easy2use.cores import log
@@ -61,15 +62,15 @@ class Response(object):
         if self._content:
             if isinstance(self._content, dict):
                 return self._content
-            try:
+
+            with contextlib.suppress(ValueError):
                 return json.loads(self._content)
-            except ValueError:
-                pass
+
         return self._content
 
     def __str__(self):
-        return '[%s] headers=%s, content=%s' % (
-            self.status, self.headers, self._content)
+        return f'[{self.status}] headers={self.headers}, ' \
+                ' content={self._content}'
 
 
 class RestClient(object):
@@ -101,7 +102,7 @@ class RestClient(object):
 
     @property
     def endpoint(self):
-        return '%s://%s:%s' % (self.scheme, self.host, self.port)
+        return f'{self.scheme}://{self.host}:{self.port}'
 
     def do_request(self, method, path, body=None, headers=None):
         if not headers:
@@ -112,9 +113,7 @@ class RestClient(object):
         self.connection.connect()
         self.connection.request(method, path, body, headers)
         resp = self.connection.getresponse()
-        headers = {}
-        for header, value in resp.getheaders():
-            headers[header] = value
+        headers = dict(resp.getheaders())
         content = resp.read()
         self.connection.close()
         resp = Response(resp.status, headers, content)

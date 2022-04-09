@@ -31,21 +31,23 @@ class SimpleTable(object):
         self.rows.append(cols)
 
     def dumps(self):
-        output_lines = []
         col_str_list = []
         for i, col in enumerate(self.header_cols):
             col_str = str(colorstr.BlueStr(
-                '{{:{}}}'.format(self.col_max_len.get(i)).format(col)))
+                f'{{:{self.col_max_len.get(i)}}}'.format(col)))
             col_str_list.append(col_str)
-        output_lines.append('|'.join(col_str_list))
-        output_lines.append(
+
+        output_lines = [
+            '|'.join(col_str_list),
             '+'.join([
                 '-' * self.col_max_len[i] for i in range(len(self.col_max_len))
-            ]))
+            ])
+        ]
+
         for row in self.rows:
             col_str_list = []
             for i, col in enumerate(row):
-                col_str = '{{:{}}}'.format(self.col_max_len.get(i)).format(col)
+                col_str = f'{{:{self.col_max_len.get(i)}}}'.format(col)
                 col_str_list.append(col_str)
             output_lines.append('|'.join(col_str_list))
 

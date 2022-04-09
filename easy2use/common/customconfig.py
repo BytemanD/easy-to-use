@@ -10,6 +10,14 @@ class ValueNotInChoices(exceptions.BaseException):
     _msg = 'Invalid value {value}, which not in {choices}.'
 
 
+class GroupNotFound(BaseException):
+    _msg = 'group {group} not found'
+
+
+class ItemNotFound(BaseException):
+    _msg = 'item {item} not found'
+
+
 @dataclasses.dataclass
 class Item(object):
     name: str
@@ -70,9 +78,9 @@ class JsonConfig(object):
 
     def set(self, name, value, group=DEFAULT_GROUP):
         if group not in self._items:
-            raise Exception('group %s not found' % group)
+            raise GroupNotFound(group=group)
         if name not in self._items[group]:
-            raise Exception('item %s is not found')
+            raise ItemNotFound(f'item {name} not found')
         self._items[group][name].value = value
 
     def to_dict(self):

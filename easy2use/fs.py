@@ -36,8 +36,7 @@ def directory_flat(top, set_index=True):
     """
     all_files = []
     for root, dirs, files in os.walk(top):
-        for f in files:
-            all_files.append((root, f))
+        all_files.extend((root, f) for f in files)
     index = 0
     index_digit = len(str(len(all_files)))
     file_name_fmt = '{{:0>{}}}_{{}}'.format(index_digit)
@@ -86,18 +85,15 @@ def zip_files(path, name=None, zip_path=True, zip_root=True, save_path=None,
                   zip_root=False)           --> [file1, file2]
     """
     if not os.path.exists(path):
-        raise FileNotFoundError('path %s not exists' % path)
+        raise FileNotFoundError(f'path {path} not exists')
 
-    zip_name = name or (os.path.basename(path) + '.zip')
+    zip_name = name or f'{os.path.basename(path)}.zip'
     zip_path_list = []
-
     if os.path.isfile(path):
         zip_path_list.append(path)
     else:
         for root, dirs, files in os.walk(path):
-            for p in files + dirs:
-                zip_path_list.append(os.path.join(root, p))
-
+            zip_path_list.extend(os.path.join(root, p) for p in files + dirs)
     file_path = os.path.join(save_path, zip_name) if save_path else zip_name
     with zipfile.ZipFile(file_path, 'w', zipfile.ZIP_DEFLATED) as zfile:
         for f in zip_path_list:
@@ -117,7 +113,7 @@ def unzip(file_path, save_path=None):
     """Unzip directory use zipfile libriary
     """
     if not zipfile.is_zipfile(file_path):
-        raise RuntimeError('%s is not zipfile' % file_path)
+        raise RuntimeError(f'{file_path} is not zipfile')
 
     unzip_name = os.path.splitext(os.path.basename(file_path))[0]
     index = itertools.count(1)
@@ -127,8 +123,7 @@ def unzip(file_path, save_path=None):
     unzip_path = os.path.join(save_path, unzip_name)
     if os.path.exists(unzip_path):
         while True:
-            unzip_path = os.path.join(save_path,
-                                      '{}_{}'.format(unzip_name, next(index)))
+            unzip_path = os.path.join(save_path, f'{unzip_name}_{next(index)}')
             if not os.path.exists(unzip_path):
                 break
     with zipfile.ZipFile(file_path, 'r') as zfile:
@@ -140,8 +135,8 @@ def find(path, pattern):
     """
     matched_pathes = []
     for root, dirs, files in os.walk(path):
-        for f in fnmatch.filter(dirs + files, pattern):
-            matched_pathes.append((root, f))
+        matched_pathes.extend(
+            (root, f) for f in fnmatch.filter(dirs + files, pattern))
     return matched_pathes
 
 
@@ -180,8 +175,7 @@ class FileBackwardsReader(object):
         seek = self.seek - self.chunk_size
         self.seek = max(seek, 0)
         self.fp.seek(self.seek)
-        data = self.fp.read(self.chunk_size)
-        return data
+        return self.fp.read(self.chunk_size)
 
     def _add_to_cached_lines(self, lines):
         if not self.cached_lines:
@@ -194,10 +188,7 @@ class FileBackwardsReader(object):
 
     def readline(self):
         self._update_cached_lines()
-        if not self.cached_lines:
-            return ''
-        else:
-            return self.cached_lines.pop()
+        return self.cached_lines.pop() if self.cached_lines else ''
 
     def readlines(self):
         lines = []

@@ -22,8 +22,7 @@ class InfluxDBClient(httpclient.RestClient):
         url = '/query?{0}'.format(
             urllib_parse.urlencode({'db': self.database, 'q': sql})
         )
-        resp = self.get(url)
-        return resp
+        return self.get(url)
 
     def write(self, measurement, tags, fields, timestramp=None):
         """InfluxDB sql:
@@ -37,20 +36,18 @@ class InfluxDBClient(httpclient.RestClient):
             ['{0}={1}'.format(k, v) for k, v in fields.items()])
         data_body = '{0},{1} {2}'.format(measurement, tags_list, fields_list)
         if timestramp:
-            data_body += ' {}'.format(timestramp)
+            data_body += f' {timestramp}'
         url_params = self.get_write_url_params()
         if self.presicion:
             url_params.update(precision=self.presicion)
         url = '{0}?{1}'.format(self.WRITE_URL,
                                urllib_parse.urlencode(url_params))
-        resp = self.post(url, data_body, headers=self.headers)
-        return resp
+        return self.post(url, data_body, headers=self.headers)
 
     def create_database(self):
         sql = 'CREATE DATABASE {0}'.format(self.database)
         url = '/query?{0}'.format(urllib_parse.urlencode({'q': sql}))
-        resp = self.get(url)
-        return resp
+        return self.get(url)
 
     def get_write_url_params(self):
         return {'db': self.database}

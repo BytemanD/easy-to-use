@@ -6,7 +6,7 @@ def run_concurrent(fn, maps=None, nums=None, max_workers=None):
         if maps:
             tasks = executor.map(fn, maps)
         elif nums:
-            tasks = [executor.submit(fn) for i in range(maps)]
+            tasks = [executor.submit(fn) for _ in range(maps)]
         for task in tasks:
             task.done()
             yield

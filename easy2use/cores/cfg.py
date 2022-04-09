@@ -42,9 +42,7 @@ class IntOption(Option):
 class BooleanOption(Option):
 
     def parse_value(self, value):
-        if isinstance(value, bool):
-            return value
-        return value.upper() == 'TRUE'
+        return value if isinstance(value, bool) else value.upper() == 'TRUE'
 
 
 class ListOption(Option):
@@ -55,10 +53,7 @@ class ListOption(Option):
         list_option = value1
                       value2
         """
-        if isinstance(value, list):
-            return value
-        else:
-            return value.split()
+        return value if isinstance(value, list) else value.split()
 
 
 class MapOption(Option):
@@ -88,12 +83,12 @@ class OptGroup(object):
 
     def add_opt(self, opt):
         if self.has_option(opt.name):
-            raise ValueError('option {} already exists'.format(opt.name))
+            raise ValueError(f'option {opt.name} already exists')
         self._options[opt.name] = opt
 
     def __getattr__(self, name):
         if name not in self._options:
-            raise Exception('No such option: {}'.format(name))
+            raise ValueError(f'No such option: {name}')
         _value = self._options[name].value
         if isinstance(_value, str):
             opts = re.findall(r'\{([a-z_]*)\}', _value)

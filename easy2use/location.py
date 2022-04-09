@@ -7,7 +7,7 @@ _COUNTRY = locale.getdefaultlocale()[0].split('_')[-1]
 def set_country(country):
     global _COUNTRY
     if country not in pytz.country_names:
-        raise ValueError('country %s is not exists.' % country)
+        raise ValueError(f'country {country} is not exists.')
     else:
         _COUNTRY = country
 

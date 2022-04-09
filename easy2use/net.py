@@ -58,11 +58,8 @@ def get_ip_addresses(v4=True, v6=False):
     addr_types = [socket.AddressFamily.AF_INET] if v4 else []
     if v6:
         addr_types.append(socket.AddressFamily.AF_INET6)
-    address_list = []
-    for addr in socket.getaddrinfo(socket.gethostname(), None):
-        if addr[0] in addr_types:
-            address_list.append(addr[4][0])
-    return address_list
+    addr_list = socket.getaddrinfo(socket.gethostname(), None)
+    return [addr[4][0] for addr in addr_list if addr[0] in addr_types]
 
 
 def split_host_port(address, default_host=None, default_port=None):

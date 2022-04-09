@@ -6,8 +6,9 @@ from easy2use.common import exceptions
 LOG = log.getLogger(__name__)
 
 
-def retry_for(func, args=(), kwargs={}, interval=1, timeout=None,
+def retry_for(func, args=(), kwargs=None, interval=1, timeout=None,
               finish_func=None, retry_exceptions=None):
+    kwargs = kwargs or {}
     end_time = time.time() + timeout if timeout else None
     retry_times = 0
     while True:

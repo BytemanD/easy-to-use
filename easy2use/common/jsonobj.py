@@ -31,7 +31,7 @@ class JsonObject(object):
         elif isinstance(obj, list):
             objs = []
             for s in obj:
-                if isinstance(s, tuple([int, str])):
+                if isinstance(s, (int, str)):
                     objs.append(s)
                 else:
                     objs.append(JsonObject(s))
@@ -40,17 +40,13 @@ class JsonObject(object):
             return obj
 
     def __getitem__(self, index):
-        if isinstance(self.value, collections.Iterable):
-            obj = self.value[index]
-            if isinstance(obj, dict):
-                return JsonObject(obj)
-            else:
-                return obj
-        else:
+        if not isinstance(self.value, collections.Iterable):
             raise ValueError('{0} is not Iterable', self)
+        obj = self.value[index]
+        return JsonObject(obj) if isinstance(obj, dict) else obj
 
     def __repr__(self):
-        return '<JsonObj keys={}>'.format(self._value.keys())
+        return f'<JsonObj keys={self._value.keys()}>'
 
     def get(self, keys, split='.'):
         return self.get_by_list(*keys.split(split))
@@ -62,11 +58,7 @@ class JsonObject(object):
                isinstance(obj, int) or isinstance(obj, bool):
                 raise KeyError(key)
             if isinstance(obj, list):
-                try:
-                    index = int(key)
-                    obj = obj[index]
-                except IndexError:
-                    raise IndexError(key)
+                obj = obj[int(key)]
             elif key not in obj:
                 raise KeyError(key)
             else:

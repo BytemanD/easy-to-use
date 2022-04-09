@@ -1,12 +1,11 @@
+import contextlib
 import io
 
 from pyzbar import pyzbar
 from PIL import Image
 
-try:
+with contextlib.suppress(ImportError):
     import qrcode
-except ImportError:
-    pass
 
 
 class QRCodeExtend(qrcode.QRCode):
