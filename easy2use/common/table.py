@@ -20,7 +20,8 @@ class SimpleTable(object):
 
     def _update_col_max_len(self, cols):
         for i, col in enumerate(cols):
-            self.col_max_len[i] = max(len(col), self.col_max_len.get(i) or 0)
+            self.col_max_len[i] = max(col and len(col) or 0,
+                                      self.col_max_len.get(i) or 0)
 
     def set_header(self, cols):
         self._update_col_max_len(cols)

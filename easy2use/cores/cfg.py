@@ -14,6 +14,7 @@ class Option(object):
         return value
 
     def set_value(self, value, cli=False):
+        # sourcery skip: raise-from-previous-error
         if self._cli:
             return
         if value is not None:
@@ -46,6 +47,11 @@ class BooleanOption(Option):
 
 
 class ListOption(Option):
+
+    def __init__(self, *args, **kwargs):
+        if not kwargs.get('default'):
+            kwargs['default'] = []
+        super(ListOption, self).__init__(*args, **kwargs)
 
     def parse_value(self, value):
         """ list values

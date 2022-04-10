@@ -21,6 +21,7 @@ class ProgressNoop(object):
 
     def __init__(self, total, **kwargs):
         self.total = total
+        self.interval = kwargs.get('interval')
 
     def update(self, size):
         pass
@@ -30,6 +31,26 @@ class ProgressNoop(object):
 
     def set_description(self, *args, **kargs):
         pass
+
+
+class ProgressWithLogging(ProgressNoop):
+    progress_format = '{}   {:3}% [{:100}]\r'
+
+    def __init__(self, total, **kwargs):
+        super(ProgressWithLogging, self).__init__(total, **kwargs)
+        self.progress = {'completed': 0, 'total': self.total}
+        self.last_time = time.time()
+        self._log_progress()
+
+    def update(self, size):
+        self.progress['completed'] += size
+        if not self.interval or time.time() - self.last_time >= self.interval:
+            self._log_progress()
+            self.last_time = time.time()
+
+    def _log_progress(self):
+        percent = self.progress['completed'] * 100 / self.progress['total']
+        LOG.info('process: [%.2f]%s', percent, '#' * int(percent))
 
 
 class ProgressWithPrint(ProgressNoop):
@@ -61,7 +82,10 @@ class ProgressWithPrint(ProgressNoop):
 
 class ProgressWithTqdm(ProgressNoop):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, total, *args, **kwargs):
+        if 'interval' in kwargs:
+            kwargs.pop('interval')
+        kwargs['total'] = total
         self.pbar = tqdm(*args, **kwargs)
 
     def update(self, size):
@@ -75,8 +99,10 @@ class ProgressWithTqdm(ProgressNoop):
         self.pbar.set_description(*args, **kwargs)
 
 
-def factory(total):
+def factory(total, use_logging=False, interval=None):
+    if use_logging:
+        return ProgressWithLogging(total, interval=interval)
     if is_support_tqdm:
-        return ProgressWithTqdm(total=total)
-    LOG.warning('tqdm is not installed, use ProgressWithPrint')
-    return ProgressWithPrint(total=total)
+        return ProgressWithTqdm(total, interval=interval)
+    LOG.warning('tqdm is not installed, use print function')
+    return ProgressWithPrint(total, interval=interval)

@@ -16,3 +16,7 @@ class EnvIsNone(BaseException):
 
 class LoopTimeout(BaseException):
     _msg = 'loop timeout({timeout}s)'
+
+
+class RetryTimeout(BaseException):
+    _msg = 'retry timeout({timeout}s)'

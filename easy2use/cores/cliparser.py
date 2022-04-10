@@ -48,6 +48,7 @@ class SubCliParser(object):
         log_config['max_mb'] = self._args.max_mb
         log_config['backup_count'] = self._args.backup_count
         log.basic_config(**log_config)
+        LOG.debug('args: %s', self._args)
 
         return self._args
 
@@ -63,11 +64,11 @@ class SubCliParser(object):
     def register_cli(self, cls):
         """params cls: CliBase type"""
         if not issubclass(cls, CliBase):
-            LOG.warning('%s is not the subclass of %s', cls, CliBase)
-            return
+            raise ValueError(f'{cls} is not the subclass of {CliBase}')
         name = cls.NAME if hasattr(cls, 'NAME') else cls.__name__
         cli_parser = self.sub_parser.add_parser(name)
-        for argument in cls.arguments():
+        log.register_arguments(cli_parser)
+        for argument in cls.ARGUMENTS:
             cli_parser.add_argument(*argument.args, **argument.kwargs)
         cli_parser.set_defaults(cli=cls)
         return cli_parser
