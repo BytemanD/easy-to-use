@@ -19,9 +19,10 @@ LOG = log.getLogger(__name__)
 
 class ProgressNoop(object):
 
-    def __init__(self, total, **kwargs):
+    def __init__(self, total, description=None, **kwargs):
         self.total = total
         self.interval = kwargs.get('interval')
+        self.description = description
 
     def update(self, size):
         pass
@@ -39,6 +40,8 @@ class ProgressWithLogging(ProgressNoop):
     def __init__(self, total, **kwargs):
         super(ProgressWithLogging, self).__init__(total, **kwargs)
         self.progress = {'completed': 0, 'total': self.total}
+        if not self.description:
+            self.description = 'progress'
         self.last_time = time.time()
         self._log_progress()
 
@@ -50,7 +53,11 @@ class ProgressWithLogging(ProgressNoop):
 
     def _log_progress(self):
         percent = self.progress['completed'] * 100 / self.progress['total']
-        LOG.info('process: [%.2f]%s', percent, '#' * int(percent))
+        LOG.info('%s: [%6s]%s', self.description,
+                 '{:.2f}'.format(percent), '#' * int(percent))
+
+    def set_description(self, description, *args, **kwargs):
+        self.description = description
 
 
 class ProgressWithPrint(ProgressNoop):
@@ -86,7 +93,10 @@ class ProgressWithTqdm(ProgressNoop):
         if 'interval' in kwargs:
             kwargs.pop('interval')
         kwargs['total'] = total
+        description = kwargs.pop('description')
         self.pbar = tqdm(*args, **kwargs)
+        if description:
+            self.set_description(description)
 
     def update(self, size):
         self.pbar.update(size)
@@ -99,10 +109,13 @@ class ProgressWithTqdm(ProgressNoop):
         self.pbar.set_description(*args, **kwargs)
 
 
-def factory(total, use_logging=False, interval=None):
+def factory(total, use_logging=False, description=None, interval=None):
     if use_logging:
-        return ProgressWithLogging(total, interval=interval)
+        return ProgressWithLogging(total, description=description,
+                                   interval=interval)
     if is_support_tqdm:
-        return ProgressWithTqdm(total, interval=interval)
+        return ProgressWithTqdm(total, description=description,
+                                interval=interval)
     LOG.warning('tqdm is not installed, use print function')
-    return ProgressWithPrint(total, interval=interval)
+    return ProgressWithPrint(total, description=description,
+                             interval=interval)

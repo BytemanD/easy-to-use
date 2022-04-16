@@ -10,17 +10,18 @@ DEFAULT_FORMAT = '%(asctime)s %(process)d %(levelname)s ' \
 
 def basic_config(level=logging.INFO, logfmt=DEFAULT_FORMAT, datefmt=None,
                  filename=None, max_mb=None, backup_count=None):
-    handler = None
-    if filename and max_mb:
+    if filename:
         log_dir = os.path.dirname(filename)
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
+    logging.basicConfig(level=level, filename=filename, format=logfmt,
+                        datefmt=datefmt)
+    if max_mb:
         handler = handlers.RotatingFileHandler(filename, mode='a',
                                                maxBytes=1024 * 1024 * max_mb,
-                                               backupCount=backup_count)
-    logging.basicConfig(level=level, filename=filename, format=logfmt,
-                        datefmt=datefmt,
-                        handlers=handler and [handler] or None)
+                                               backupCount=backup_count or 100)
+        handler.setFormatter(logging.Formatter(fmt=logfmt, datefmt=datefmt))
+        logging.root.handlers[0] = handler
 
 
 def load_config(config_file):
@@ -54,6 +55,6 @@ def get_args():
 
 
 def register_arguments(parser):
-    log_group = parser.add_argument_group(title='log options')
+    log_group = parser.add_argument_group(title='log arguments')
     for argument in get_args():
         log_group.add_argument(*argument.args, **argument.kwargs)
