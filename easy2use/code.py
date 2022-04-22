@@ -3,7 +3,7 @@ import io
 import os
 import random
 
-from easy2use.common import progressbar
+from easy2use.component import pbr
 
 LOWER = 'abcdefghijklmnopqrstuvwxyz'
 UPPER = 'abcdefghijklmnopqrstuvwxyz'.upper()
@@ -39,8 +39,8 @@ def md5sum_file(file_path, read_bytes=None, sha1=False, progress=False):
 
     with open(file_path, 'rb') as f:
         file_size = os.fstat(f.fileno()).st_size
-        pbar = progressbar.factory(file_size) if progress \
-            else progressbar.ProgressWithNull(file_size)
+        pbar = pbr.factory(file_size) if progress \
+            else pbr.ProgressNoop(file_size)
 
         for data in read_from_fo(f):
             md5sum.update(data)

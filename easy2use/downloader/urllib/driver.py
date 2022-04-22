@@ -1,4 +1,5 @@
 import io
+import logging
 import os
 import re
 import urllib3
@@ -6,12 +7,11 @@ from urllib import parse as urllib_parse
 
 import bs4
 
-from easy2use.cores import log
 from easy2use.common import progressbar
 from easy2use.common import exceptions
 from easy2use.downloader import driver
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 FILE_NAME_MAX_SIZE = 50
 

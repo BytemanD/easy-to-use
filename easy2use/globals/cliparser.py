@@ -2,9 +2,9 @@ import sys
 import argparse
 import logging
 
-from easy2use.cores import log
+from easy2use.globals import log
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Argument(object):

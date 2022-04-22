@@ -1,12 +1,13 @@
+import logging
 import json
 import subprocess
+
 from gevent import pywsgi
 
-from easy2use.cores import log
 from easy2use import net
 from easy2use.system import OS
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 DEFUALT_METHOD_STATUS = {
     'GET': '200 OK',

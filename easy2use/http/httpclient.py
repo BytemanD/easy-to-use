@@ -1,12 +1,10 @@
-import imp
 import contextlib
 import json
+import logging
 import ssl
 from http import client as http_client
 
-from easy2use.cores import log
-
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class UnknownException(Exception):

@@ -1,11 +1,10 @@
+import logging
 import sys
 import locale
 import subprocess
 from collections import namedtuple
 
-from easy2use.cores import log
-
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 ExecuteResult = namedtuple('ExecutorResult', 'status stdout stderr')
 

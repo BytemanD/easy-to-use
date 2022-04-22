@@ -1,11 +1,10 @@
 import getpass
+import logging
 import os
 
 import paramiko
 
-from easy2use.cores import log
-
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 DEFAULT_PORT = 22
 DEFAULT_TIMEOUT = 60

@@ -2,13 +2,13 @@ import contextlib
 import fnmatch
 import io
 import itertools
+import logging
 import os
 import zipfile
 
-from easy2use.cores import log
 from easy2use.system import OS
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def remove(path, recursive=False):

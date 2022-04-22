@@ -1,13 +1,13 @@
+import logging
 import os
 
 import flask
 from flask import views
 from gevent import pywsgi
 
-from easy2use.cores import log
 from easy2use import net
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 ROUTE = os.path.dirname(os.path.abspath(__file__))
 
 INDEX_HTML = """

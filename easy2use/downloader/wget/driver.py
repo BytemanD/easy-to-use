@@ -1,9 +1,9 @@
+import logging
 import os
 
-from easy2use.cores import log
 from easy2use.downloader import driver
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class WgetDriver(driver.BaseDownloadDriver):

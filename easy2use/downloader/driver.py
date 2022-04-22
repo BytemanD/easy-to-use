@@ -1,9 +1,8 @@
 import abc
 from concurrent import futures
+import logging
 
-from easy2use.cores import log
-
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 DEFAULT_WORKERS = 10
 
 

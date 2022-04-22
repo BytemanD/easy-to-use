@@ -1,9 +1,9 @@
+import logging
 import time
 
-from easy2use.cores import log
 from easy2use.common import exceptions
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def retry_for(func, args=(), kwargs=None, interval=1, timeout=None,
@@ -32,7 +32,7 @@ def retry_untile_true(func, args=(), kwargs=None, interval=1, timeout=None):
     retry_times = 0
     while True:
         result = func(*args, **kwargs)
-        if result == True:
+        if result is True:
             break
         if end_time and time.time() >= end_time:
             raise exceptions.RetryTimeout(timeout=timeout, times=retry_times)

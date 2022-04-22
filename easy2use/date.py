@@ -3,8 +3,8 @@ import pytz
 from datetime import datetime
 from datetime import timedelta
 
-FORMAT_YYYY_MM_DD_HHMMSS = '%Y-%m-%d %H:%M:%S'
-FORMAT_YYYY_MM_DD_HHMMSS_Z = '%Y-%m-%d %H:%M:%S %Z'
+YMD_HMS = '%Y-%m-%d %H:%M:%S'
+YMD_HMS_Z = '%Y-%m-%d %H:%M:%S %Z'
 
 
 def parse_timestamp2str(timestamp, date_fmt=None):
@@ -22,8 +22,7 @@ def parse_str2timestamp(datetime_str, date_fmt=None):
     >>> parse_str2timestamp('1970-01-01 08:00:00')
     0.0
     """
-    return time.mktime(time.strptime(datetime_str,
-                                     date_fmt or FORMAT_YYYY_MM_DD_HHMMSS))
+    return time.mktime(time.strptime(datetime_str, date_fmt or YMD_HMS))
 
 
 parse_ts2str = parse_timestamp2str
@@ -37,7 +36,7 @@ def now(tz=None):
     return datetime.now(tz=timezone)
 
 
-def now_str(tz=None, date_fmt=None):
+def now_str(tz=None, date_fmt=YMD_HMS):
     date_now = now(tz=tz)
     return date_now.strftime(date_fmt) if date_fmt else date_now.isoformat()
 
