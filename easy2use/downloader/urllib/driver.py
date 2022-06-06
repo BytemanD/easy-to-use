@@ -70,7 +70,7 @@ class Urllib3Driver(driver.BaseDownloadDriver):
             size = resp.headers.get('Content-Length')
             pbar = size and progressbar.factory(int(size)) or \
                 progressbar.ProgressNoop(0)
-            desc_template = f'{{:{self.filename_length}}}'
+            desc_template = '{{:{}}}'.format(self.filename_length)
             pbar.set_description(desc_template.format(file_name))
         else:
             pbar = progressbar.ProgressNoop(0)

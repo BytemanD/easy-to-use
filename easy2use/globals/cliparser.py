@@ -64,7 +64,8 @@ class SubCliParser(object):
     def register_cli(self, cls):
         """params cls: CliBase type"""
         if not issubclass(cls, CliBase):
-            raise ValueError(f'{cls} is not the subclass of {CliBase}')
+            raise ValueError(
+                '{} is not the subclass of {}'.format(cls, CliBase))
         name = cls.NAME if hasattr(cls, 'NAME') else cls.__name__
         cli_parser = self.sub_parser.add_parser(name)
         log.register_arguments(cli_parser)

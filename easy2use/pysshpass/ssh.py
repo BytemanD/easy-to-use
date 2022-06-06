@@ -91,7 +91,7 @@ class SSHClient(object):
 
     def put(self, local_file, remote_path='./'):
         if not os.path.exists(local_file):
-            raise IOError(f'Error: local file {local_file} not exists')
+            raise IOError('Error: local file {} not exists'.format(local_file))
         self._connect()
         sftp = self.client.open_sftp()
         try:

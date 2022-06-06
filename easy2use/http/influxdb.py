@@ -36,7 +36,7 @@ class InfluxDBClient(httpclient.RestClient):
             ['{0}={1}'.format(k, v) for k, v in fields.items()])
         data_body = '{0},{1} {2}'.format(measurement, tags_list, fields_list)
         if timestramp:
-            data_body += f' {timestramp}'
+            data_body += ' {}'.format(timestramp)
         url_params = self.get_write_url_params()
         if self.presicion:
             url_params.update(precision=self.presicion)

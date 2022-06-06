@@ -68,7 +68,7 @@ def convert_base(src_number, target_base, src_base=None):
     'b'
     """
     if target_base not in base_func:
-        raise ValueError(f'Only support base: {base_func.keys()}')
+        raise ValueError('Only support base: {}'.format(base_func.keys()))
     if src_base is None:
         if isinstance(src_number, int):
             src_base = 10

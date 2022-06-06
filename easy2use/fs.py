@@ -85,9 +85,9 @@ def zip_files(path, name=None, zip_path=True, zip_root=True, save_path=None,
                   zip_root=False)           --> [file1, file2]
     """
     if not os.path.exists(path):
-        raise FileNotFoundError(f'path {path} not exists')
+        raise FileNotFoundError('path {} not exists'.format(path))
 
-    zip_name = name or f'{os.path.basename(path)}.zip'
+    zip_name = name or '{}.zip'.format(os.path.basename(path))
     zip_path_list = []
     if os.path.isfile(path):
         zip_path_list.append(path)
@@ -113,7 +113,7 @@ def unzip(file_path, save_path=None):
     """Unzip directory use zipfile libriary
     """
     if not zipfile.is_zipfile(file_path):
-        raise RuntimeError(f'{file_path} is not zipfile')
+        raise RuntimeError('{} is not zipfile'.format(file_path))
 
     unzip_name = os.path.splitext(os.path.basename(file_path))[0]
     index = itertools.count(1)
@@ -123,7 +123,8 @@ def unzip(file_path, save_path=None):
     unzip_path = os.path.join(save_path, unzip_name)
     if os.path.exists(unzip_path):
         while True:
-            unzip_path = os.path.join(save_path, f'{unzip_name}_{next(index)}')
+            unzip_path = os.path.join(save_path,
+                                      '{}_{}'.format(unzip_name, next(index)))
             if not os.path.exists(unzip_path):
                 break
     with zipfile.ZipFile(file_path, 'r') as zfile:

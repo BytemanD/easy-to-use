@@ -3,7 +3,7 @@ import time
 
 class LocalCache(object):
 
-    def __init__(self, expired=None) -> None:
+    def __init__(self, expired=None):
         self.expired = expired
         self._data = {}
 

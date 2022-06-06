@@ -1,6 +1,6 @@
 import re
-import configparser
 
+import ConfigParser as configparser
 
 class Option(object):
 
@@ -89,12 +89,12 @@ class OptGroup(object):
 
     def add_opt(self, opt):
         if self.has_option(opt.name):
-            raise ValueError(f'option {opt.name} already exists')
+            raise ValueError('option {} already exists'.format(opt.name))
         self._options[opt.name] = opt
 
     def __getattr__(self, name):
         if name not in self._options:
-            raise ValueError(f'No such option: {name}')
+            raise ValueError('No such option: {name}'.format(name))
         _value = self._options[name].value
         if isinstance(_value, str):
             opts = re.findall(r'\{([a-z_]*)\}', _value)

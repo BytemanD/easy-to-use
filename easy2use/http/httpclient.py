@@ -67,8 +67,8 @@ class Response(object):
         return self._content
 
     def __str__(self):
-        return f'[{self.status}] headers={self.headers}, ' \
-                ' content={self._content}'
+        return '[{}] headers={}, content={}'.format(self.status, self.headers,
+                                                    self._content)
 
 
 class RestClient(object):
@@ -100,7 +100,7 @@ class RestClient(object):
 
     @property
     def endpoint(self):
-        return f'{self.scheme}://{self.host}:{self.port}'
+        return '{}://{}:{}'.format(self.scheme, self.host, self.port)
 
     def do_request(self, method, path, body=None, headers=None):
         if not headers:

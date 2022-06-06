@@ -34,8 +34,11 @@ class SimpleTable(object):
     def dumps(self):
         col_str_list = []
         for i, col in enumerate(self.header_cols):
-            col_str = str(colorstr.BlueStr(
-                f'{{:{self.col_max_len.get(i)}}}'.format(col)))
+            col_str = str(
+                colorstr.BlueStr(
+                    '{{:{}}}'.format(self.col_max_len.get(i)).format(col)
+                )
+            )
             col_str_list.append(col_str)
 
         output_lines = [
@@ -48,7 +51,7 @@ class SimpleTable(object):
         for row in self.rows:
             col_str_list = []
             for i, col in enumerate(row):
-                col_str = f'{{:{self.col_max_len.get(i)}}}'.format(col)
+                col_str = '{{:{}}}'.format(self.col_max_len.get(i)).format(col)
                 col_str_list.append(col_str)
             output_lines.append('|'.join(col_str_list))
 

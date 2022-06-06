@@ -46,7 +46,7 @@ class JsonObject(object):
         return JsonObject(obj) if isinstance(obj, dict) else obj
 
     def __repr__(self):
-        return f'<JsonObj keys={self._value.keys()}>'
+        return '<JsonObj keys={}>'.format(self._value.keys())
 
     def get(self, keys, split='.'):
         return self.get_by_list(*keys.split(split))
