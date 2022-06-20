@@ -4,6 +4,8 @@ from logging import config
 from logging import handlers
 
 from easy2use import date
+from easy2use.globals.cli import Arg
+from easy2use.globals.cli import ArgGroup
 
 FORMAT = '%(asctime)s %(process)d %(levelname)s %(name)s:%(lineno)s ' \
          '%(message)s'
@@ -92,23 +94,31 @@ def getLogger(name):
     else:
         return logging.getLogger(name)
 
+BACKUP_COUNT = 10
 
-def get_args():
-    from easy2use.globals.cliparser import Argument          # noqa
-
-    return [Argument('-d', '--debug', action='store_true',
-                     help='Show debug message'),
-            Argument('-v', '--verbose', action='store_true',
-                     help='Show verbose message'),
-            Argument('--log-file', help='The path of log file'),
-            Argument('--max-mb', type=int,
-                     help='The max size of log file (units: MB)'),
-            Argument('--backup-count', type=int,
-                     help='The backup count of log file.'),
+LOG_ARGS =  [Arg('-d', '--debug', action='store_true',
+                 help='Show debug message'),
+             Arg('-v', '--verbose', action='store_true',
+                 help='Show verbose message'),
+             Arg('--log-file', help='The path of log file'),
+             Arg('--max-mb', type=int,
+                 help='The max size of log file (units: MB)'),
+             Arg('--backup-count', type=int, default=BACKUP_COUNT,
+                 help=f'The backup count of log file. default {BACKUP_COUNT}'),
             ]
 
 
+def get_args():
+    return [ArgGroup('log arguments', LOG_ARGS)]
+
+import argparse
+
 def register_arguments(parser):
-    log_group = parser.add_argument_group(title='log arguments')
     for argument in get_args():
-        log_group.add_argument(*argument.args, **argument.kwargs)
+        if isinstance(argument, Arg):
+            parser.add_argument(*argument.args, **argument.kwargs)
+        elif isinstance(argument, ArgGroup):
+            log_group = parser.add_argument_group(title='log arguments')
+            log_group.add_argument(*argument.args, **argument.kwargs)
+        else:
+            raise ValueError('Invalid arg class %s', argument.__class__)
