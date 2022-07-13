@@ -7,7 +7,7 @@ from urllib import parse as urllib_parse
 
 import bs4
 
-from easy2use.common import progressbar
+from easy2use.component import pbr
 from easy2use.common import exceptions
 from easy2use.downloader import driver
 
@@ -68,12 +68,11 @@ class Urllib3Driver(driver.BaseDownloadDriver):
         LOG.debug('get resp for url %s', url)
         if self.progress:
             size = resp.headers.get('Content-Length')
-            pbar = size and progressbar.factory(int(size)) or \
-                progressbar.ProgressNoop(0)
+            pbar = size and pbr.factory(int(size))
             desc_template = f'{{:{self.filename_length}}}'
             pbar.set_description(desc_template.format(file_name))
         else:
-            pbar = progressbar.ProgressNoop(0)
+            pbar = pbr.PrinterBar(0)
 
         if not self.keep_full_path:
             save_path = os.path.join(self.download_dir, file_name)
