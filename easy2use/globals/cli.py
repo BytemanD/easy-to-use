@@ -15,7 +15,7 @@ class Arg(object):
 class ArgGroup(object):
 
     def __init__(self, title, options):
-        self.title  = title
+        self.title = title
         self.options = options
 
 
@@ -34,8 +34,9 @@ class SubCli(object):
 
 class SubCliParser(object):
 
-    def __init__(self, title):
-        self.parser = argparse.ArgumentParser()
+    def __init__(self, usage, title=None, description=None):
+        self.parser = argparse.ArgumentParser(usage=usage,
+                                              description=description)
         self.sub_parser = self.parser.add_subparsers(title=title)
         self._args = None
 

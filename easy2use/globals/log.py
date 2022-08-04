@@ -12,6 +12,18 @@ FORMAT = '%(asctime)s %(process)d %(levelname)s %(name)s:%(lineno)s ' \
 FORMAT_EXTRA = '%(asctime)s %(process)d %(levelname)s %(name)s:%(lineno)s' \
                '%(extras)s %(message)s'
 DATE_FMT = date.YMD_HMS
+BACKUP_COUNT = 10
+
+LOG_ARGS = [Arg('-d', '--debug', action='store_true',
+                help='Show debug message'),
+            Arg('-v', '--verbose', action='store_true',
+                help='Show verbose message'),
+            Arg('--log-file', help='The path of log file'),
+            Arg('--max-mb', type=int,
+                help='The max size of log file (units: MB)'),
+            Arg('--backup-count', type=int, default=BACKUP_COUNT,
+                help=f'The backup count of log file. default {BACKUP_COUNT}'),
+            ]
 
 _EXTRA_KEYS = []
 
@@ -43,8 +55,8 @@ class SimpleLogAdapter(logging.LoggerAdapter):
         All kwargs will be passed to a string like: '[key1: value1]'.
         """
         extras = ', '.join([
-            '{}: {}'.format(k, kwargs.pop(k)) for k in self.extra_keys \
-                if k in kwargs
+            '{}: {}'.format(k, kwargs.pop(k)) for k in self.extra_keys
+            if k in kwargs
         ])
         kwargs['extra'] = {'extras': extras and ' [{}]'.format(extras) or ''}
         return msg, kwargs
@@ -94,24 +106,10 @@ def getLogger(name):
     else:
         return logging.getLogger(name)
 
-BACKUP_COUNT = 10
-
-LOG_ARGS =  [Arg('-d', '--debug', action='store_true',
-                 help='Show debug message'),
-             Arg('-v', '--verbose', action='store_true',
-                 help='Show verbose message'),
-             Arg('--log-file', help='The path of log file'),
-             Arg('--max-mb', type=int,
-                 help='The max size of log file (units: MB)'),
-             Arg('--backup-count', type=int, default=BACKUP_COUNT,
-                 help=f'The backup count of log file. default {BACKUP_COUNT}'),
-            ]
-
 
 def get_args():
     return [ArgGroup('log arguments', LOG_ARGS)]
 
-import argparse
 
 def register_arguments(parser):
     for argument in get_args():
