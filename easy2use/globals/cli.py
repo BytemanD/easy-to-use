@@ -34,9 +34,9 @@ class SubCli(object):
 
 class SubCliParser(object):
 
-    def __init__(self, usage, title=None, description=None):
-        self.parser = argparse.ArgumentParser(usage=usage,
-                                              description=description)
+    def __init__(self, description, usage=None, title=None):
+        self.parser = argparse.ArgumentParser(description=description,
+                                              usage=usage)
         self.sub_parser = self.parser.add_subparsers(title=title)
         self._args = None
 
