@@ -53,3 +53,16 @@ class SimpleTable(object):
             output_lines.append('|'.join(col_str_list))
 
         return '\n'.join(output_lines)
+
+
+class CSVTable(object):
+
+    def __init__(self, headers) -> None:
+        self.headers = headers
+        self.rows = []
+
+    def add_row(self, row):
+        self.rows.append(row)
+
+    def __str__(self) -> str:
+        return '\n'.join([','.join(row) for row in [self.headers] + self.rows])

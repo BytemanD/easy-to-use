@@ -22,6 +22,10 @@ class ArgGroup(object):
 class SubCli(object):
     """Add class property NAME to set subcommaon name
     """
+    HELP = None
+    PROG = None
+    DESCRIPTION = None
+    USAGE = None
     ARGUMENTS = []
 
     def __call__(self, args):
@@ -73,7 +77,9 @@ class SubCliParser(object):
         if not issubclass(cls, SubCli):
             raise ValueError(f'{cls} is not the subclass of {SubCli}')
         name = cls.NAME if hasattr(cls, 'NAME') else cls.__name__
-        sub_parser = self.sub_parser.add_parser(name)
+        sub_parser = self.sub_parser.add_parser(name, prog=cls.PROG,
+                                                help=cls.HELP, usage=cls.USAGE,
+                                                description=cls.DESCRIPTION)
 
         for argument in cls.arguments():
             if isinstance(argument, Arg):
