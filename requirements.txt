@@ -1,6 +1,6 @@
 pytz>=2004,<=2021
 futures==3.1.1
-flask
+# flask
 psutil>=5.0.0
 paramiko>=2.0.0
 pyzbar>=0.1.0
