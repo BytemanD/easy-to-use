@@ -45,6 +45,7 @@ class TornadoApp(object):
                               static_path=self.static_path)
 
         if self.develop:
+            LOG.warn('Starting sevice with develop mode')
             app.listen(port, address=address)
         else:
             server = httpserver.HTTPServer(app, max_body_size=max_body_size)

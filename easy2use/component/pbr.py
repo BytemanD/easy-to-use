@@ -103,8 +103,9 @@ class TqdmBar(PrinterBar):
         self.pbar.set_description(*args, **kwargs)
 
 
-def factory(total, description=None, interval=None, driver='tqdm'):
+def factory(total, description=None, interval=None, driver=None):
     bar_cls = None
+    driver = driver or 'tqdm'
     if driver == 'logging':
         bar_cls = LoggingBar
     elif driver == 'tqdm':

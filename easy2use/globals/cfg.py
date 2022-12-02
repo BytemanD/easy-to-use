@@ -1,5 +1,9 @@
+import os
 import re
 import configparser
+import logging
+
+LOG = logging.getLogger(__name__)
 
 
 class Option(object):
@@ -185,6 +189,17 @@ class ConfigOpts(object):
 
     def conf_files(self):
         return self._conf_files
+
+
+def load_configs(conf_files):
+    for file in conf_files:
+        if not os.path.exists(file):
+            continue
+        LOG.info('Load config file from %s', file)
+        CONF.load(file)
+        break
+    else:
+        LOG.warning('config file not found')
 
 
 CONF = ConfigOpts()
