@@ -63,5 +63,5 @@ class PodmanCmd(DockerCmd):
     cmd = PODMAN
 
 
-def get_impl(impl=None):
+def get_container_impl(impl=None):
     return PodmanCmd if impl == PODMAN else PODMAN
