@@ -1,4 +1,5 @@
 import logging
+import sys
 
 try:
     import subprocess
@@ -64,4 +65,4 @@ class PodmanCmd(DockerCmd):
 
 
 def get_container_impl(impl=None):
-    return PodmanCmd if impl == PODMAN else PODMAN
+    return PodmanCmd if impl == PODMAN else DockerCmd
