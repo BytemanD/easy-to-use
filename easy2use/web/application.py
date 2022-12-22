@@ -1,4 +1,3 @@
-import os
 import logging
 import signal
 
@@ -17,7 +16,6 @@ def stop_ioloop(signum, frame):
 
     ioloop.IOLoop.instance().add_callback_from_signal(
         lambda: ioloop.IOLoop.instance().stop())
-
 
 
 class Index(web.RequestHandler):

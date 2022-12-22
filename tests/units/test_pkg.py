@@ -1,4 +1,3 @@
-import mock
 import unittest
 import ddt
 
@@ -17,8 +16,7 @@ class PackageVersionTestCases(unittest.TestCase):
               ('0.0.2', '0.0.3.dev1', -1),
               ('0.0.2.dev1', '0.0.2.dev2', -1),
               ('0.0.1.dev1', '0.0.2', -1),
-              ('0.0.1.dev1', '0.0.1.dev1', 0),
-              )
+              ('0.0.1.dev1', '0.0.1.dev1', 0))
     def test_compare(self, version):
         version1, version2 = version[0], version[1]
         package_version1 = pkg.PackageVersion(version1)
