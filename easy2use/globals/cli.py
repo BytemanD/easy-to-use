@@ -1,6 +1,8 @@
 import sys
 import argparse
 import logging
+import copy
+import inspect
 
 LOG = logging.getLogger(__name__)
 
@@ -103,9 +105,35 @@ class SubCliParser(object):
     def print_help(self):
         self.parser.print_help()
 
+    def add_command(self, *cli_args, help=None, prog=None, ):
+        """Register the function as sub command
 
-def get_sub_cli_parser(title):
-    return SubCliParser(title)
+        NOTE:
+            Parse function the fist line of document as cli description
+        """
+
+        def wrapper(func):
+
+            def callback(cli_obj, *args):
+                func(*args)
+
+            cli = copy.deepcopy(SubCli)
+            cli.NAME = func.__name__.replace('_', '-')
+            cli.HELP = help
+            cli.PROG = prog
+            doc_lines = inspect.getdoc(func).split('\n')
+            cli.DESCRIPTION = doc_lines and doc_lines[0] or None
+            cli.__call__ = callback
+            for cli_arg in cli_args:
+                cli.ARGUMENTS.append(cli_arg)
+
+            self.register_cli(cli)
+
+        return wrapper
+
+
+def get_sub_cli_parser(description, **kargs):
+    return SubCliParser(description, **kargs)
 
 
 def register_cli(sub_cli_parser):
