@@ -1,7 +1,6 @@
 import sys
 import argparse
 import logging
-import copy
 import inspect
 
 LOG = logging.getLogger(__name__)
@@ -12,6 +11,27 @@ class Arg(object):
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.args}>'
+
+
+class IntArg(Arg):
+
+    def __init__(self, *args, **kwargs):
+        if 'type' in kwargs and kwargs.get('type') != int:
+            raise ValueError('type must be "int"')
+        kwargs['type'] = int
+        super().__init__(*args, **kwargs)
+
+
+class BoolArg(Arg):
+
+    def __init__(self, *args, **kwargs):
+        if 'action' in kwargs and kwargs.get('action') != 'store_true':
+            raise ValueError('action must be "store_true"')
+        kwargs['action'] = 'store_true'
+        super().__init__(*args, **kwargs)
 
 
 class ArgGroup(object):
@@ -114,20 +134,22 @@ class SubCliParser(object):
 
         def wrapper(func):
 
-            def callback(cli_obj, *args):
-                func(*args)
+            class NewSubCli(SubCli):
+                ARGUMENTS = []
 
-            cli = copy.deepcopy(SubCli)
-            cli.NAME = func.__name__.replace('_', '-')
-            cli.HELP = help
-            cli.PROG = prog
-            doc_lines = inspect.getdoc(func).split('\n')
-            cli.DESCRIPTION = doc_lines and doc_lines[0] or None
-            cli.__call__ = callback
+                def __call__(self, args):
+                    func(args)
+
+            NewSubCli.NAME = func.__name__.replace('_', '-')
+            NewSubCli.HELP = help
+            NewSubCli.PROG = prog
+            doc_lines = (inspect.getdoc(func) or '').split('\n')
+            NewSubCli.DESCRIPTION = doc_lines and doc_lines[0] or None
+
             for cli_arg in cli_args:
-                cli.ARGUMENTS.append(cli_arg)
+                NewSubCli.ARGUMENTS.append(cli_arg)
 
-            self.register_cli(cli)
+            self.register_cli(NewSubCli)
 
         return wrapper
 
