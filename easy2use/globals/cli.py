@@ -44,6 +44,7 @@ class ArgGroup(object):
 class SubCli(object):
     """Add class property NAME to set subcommaon name
     """
+    NAME = None
     HELP = None
     PROG = None
     DESCRIPTION = None
@@ -98,7 +99,7 @@ class SubCliParser(object):
         """params cls: CliBase type"""
         if not issubclass(cls, SubCli):
             raise ValueError(f'{cls} is not the subclass of {SubCli}')
-        name = cls.NAME if hasattr(cls, 'NAME') else cls.__name__
+        name = cls.NAME or cls.__name__
         sub_parser = self.sub_parser.add_parser(name, prog=cls.PROG,
                                                 help=cls.HELP, usage=cls.USAGE,
                                                 description=cls.DESCRIPTION)
@@ -125,29 +126,25 @@ class SubCliParser(object):
     def print_help(self):
         self.parser.print_help()
 
-    def add_command(self, *cli_args, help=None, prog=None, ):
+    def add_command(self, *cli_args, help=None, prog=None):
         """Register the function as sub command
 
         NOTE:
-            Parse function the fist line of document as cli description
+            Parse the fist line of document as cli description
         """
 
         def wrapper(func):
+            doc_lines = (inspect.getdoc(func) or '').split('\n')
 
             class NewSubCli(SubCli):
-                ARGUMENTS = []
+                NAME = func.__name__.replace('_', '-')
+                HELP = help
+                PROG = prog
+                DESCRIPTION = doc_lines and doc_lines[0] or None
+                ARGUMENTS = cli_args
 
                 def __call__(self, args):
                     func(args)
-
-            NewSubCli.NAME = func.__name__.replace('_', '-')
-            NewSubCli.HELP = help
-            NewSubCli.PROG = prog
-            doc_lines = (inspect.getdoc(func) or '').split('\n')
-            NewSubCli.DESCRIPTION = doc_lines and doc_lines[0] or None
-
-            for cli_arg in cli_args:
-                NewSubCli.ARGUMENTS.append(cli_arg)
 
             self.register_cli(NewSubCli)
 

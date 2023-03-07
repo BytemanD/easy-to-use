@@ -6,6 +6,7 @@ import contextlib
 import logging
 import threading
 import time
+import abc
 
 try:
     from tqdm import tqdm
@@ -17,13 +18,13 @@ from easy2use import date
 LOG = logging.getLogger(__name__)
 
 
-class ProgressBar(object):
+class ProgressBar(abc.ABC):
 
-    def __init__(self, total, description=None, **kwargs):
+    def __init__(self, total, description=None):
         self.total = total
-        self.interval = kwargs.get('interval')
-        self.description = description
+        self.description = description or ''
 
+    @abc.abstractmethod
     def update(self, size):
         pass
 
@@ -34,14 +35,19 @@ class ProgressBar(object):
         pass
 
 
-class PrinterBar(object):
+class NopProgressBar(ProgressBar):
+
+    def update(self, size):
+        pass
+
+
+class LoggingBar(ProgressBar):
     padding = '■'
-    progress_format = '{} {} {:>6}% [{:100}]\r'
+    progress_format = '{} {:>6}% {}'
 
     def __init__(self, total, description=None, **kwargs):
-        self.total = total
-        self.interval = kwargs.get('interval')
-        self.description = description or ''
+        super().__init__(total, description)
+        self.interval = kwargs.pop('interval', None)
         self.last_time = time.time()
         self.lock = threading.Lock()
         self._progress = 0
@@ -52,8 +58,23 @@ class PrinterBar(object):
             self.show_progress()
             self.last_time = time.time()
 
+    @property
+    def percent(self):
+        return self._progress * 100 / self.total
+
     def set_description(self, description, *args, **kargs):
         self.description = description
+
+    def show_progress(self):
+        percent = self.percent
+        LOG.info(self.progress_format.format(self.description,
+                                             '{:.2f}'.format(percent),
+                                             self.padding * int(percent)))
+
+
+class PrinterBar(LoggingBar):
+    padding = '■'
+    progress_format = '{} {} {:>6}% [{:100}]\r'
 
     def show_progress(self):
         self.lock.acquire()
@@ -64,33 +85,18 @@ class PrinterBar(object):
               end='')
         self.lock.release()
 
-    @property
-    def percent(self):
-        return self._progress * 100 / self.total
-
     def close(self):
         print()
 
 
-class LoggingBar(PrinterBar):
-    progress_format = '{} {:>6}% {}'
-
-    def show_progress(self):
-        percent = self.percent
-        LOG.info(self.progress_format.format(self.description,
-                                             '{:.2f}'.format(percent),
-                                             self.padding * int(percent)))
-
-
 class TqdmBar(PrinterBar):
 
-    def __init__(self, total, *args, **kwargs):
+    def __init__(self, total, *args, description=None, **kwargs):
+        super().__init__(total, description)
         kwargs.pop('interval', None)
-        description = kwargs.pop('description')
-        kwargs['total'] = total
-        self.pbar = tqdm(*args, **kwargs)
-        if description:
-            self.set_description(description)
+        self.pbar = tqdm(*args, total=self.total, **kwargs)
+        if self.description:
+            self.set_description(self.description)
 
     def update(self, size):
         self.pbar.update(size)
@@ -128,6 +134,3 @@ def progressbar(*args, **kwargs):
     bar = factory(*args, **kwargs)
     yield bar
     bar.close()
-
-
-# bar = factory(10, description='xxxxx', )
