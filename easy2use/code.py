@@ -2,6 +2,7 @@ import hashlib
 import io
 import os
 import random
+import argparse
 
 from easy2use.component import pbr
 
@@ -116,3 +117,25 @@ def random_password(lower=4, upper=None, number=None, special=None):
 
     random.shuffle(password)
     return ''.join(password)
+
+
+def main():
+    """Random String Generator
+    Usage:
+        python -m easy2use.code
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l', '--lower', type=int, default=4)
+    parser.add_argument('-u', '--upper', type=int)
+    parser.add_argument('-n', '--number', type=int)
+    parser.add_argument('-s', '--special', type=int)
+
+    args = parser.parse_args()
+
+    print(
+        random_password(lower=args.lower, upper=args.upper, number=args.number,
+                        special=args.special))
+
+
+if __name__ == '__main__':
+    main()
