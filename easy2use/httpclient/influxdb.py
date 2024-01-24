@@ -1,9 +1,9 @@
 from urllib import parse as urllib_parse
 
-from easy2use.http import httpclient
+from . import client
 
 
-class InfluxDBClient(httpclient.RestClient):
+class InfluxDBClient(client.RestClient):
     WRITE_URL = '/write'
 
     def __init__(self, host, database, port=8086,

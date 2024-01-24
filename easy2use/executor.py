@@ -1,3 +1,4 @@
+from concurrent import futures
 import logging
 import sys
 import locale
@@ -47,3 +48,13 @@ class LinuxExecutor(object):
         p.communicate()
         LOG.debug('Stdout: %s, Stderr: %s', out, err)
         return ExecuteResult(p.returncode, ''.join(out), ''.join(err))
+
+
+def run_processes(func, maps=None, max_workers=1, nums=None):
+    with futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+        if maps:
+            tasks = executor.map(func, maps)
+        elif nums:
+            tasks = [executor.submit(func) for _ in range(nums)]
+        for future in futures.as_completed(tasks):
+            yield future.result()
