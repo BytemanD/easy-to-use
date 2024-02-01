@@ -9,10 +9,10 @@ def get_download_driver(use_wget=False, workers=None):
     return cls(progress=True, workers=workers)
 
 
-def get_urls(url, direct=False, regex=None):
+def get_urls(url: str, direct=False, regex=None):
     if url.startswith('http://') or url.startswith('https://'):
         if direct:
-            urls =  [url]
+            urls = [url]
         else:
             links = urllib_driver.find_links(url, link_regex=regex)
             urls = [urllib_parse.urljoin(url, link) for link in links]

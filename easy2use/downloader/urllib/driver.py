@@ -43,8 +43,8 @@ def find_links(url, link_regex=None, headers=None):
 
 class Urllib3Driver(driver.BaseDownloadDriver):
 
-    def __init__(self, headers=None, pool_maxsize: int=None,
-                 buffer_size: int=None,
+    def __init__(self, headers=None, pool_maxsize: int = None,
+                 buffer_size: int = None,
                  **kwargs):
         """URLlib3 downlad driver
 
@@ -74,13 +74,13 @@ class Urllib3Driver(driver.BaseDownloadDriver):
 
     def _format_description(self, message):
         return f'{message[:self._mid_index]}****{message[-self._mid_index:]}'
-    
+
     def download(self, url):
         file_name = os.path.basename(url)
         resp = self.http.request('GET', url, preload_content=False)
         LOG.debug('get resp for url %s', url)
         size = 'Content-Length' in resp.headers and \
-                int(resp.headers.get('Content-Length')) or None
+            int(resp.headers.get('Content-Length')) or None
 
         if self.progress and size:
             pbar = pbr.factory(size)

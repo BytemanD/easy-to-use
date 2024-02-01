@@ -1,5 +1,5 @@
 import importlib
-import pkg_resources
+from importlib import metadata
 
 
 def import_class(class_path):
@@ -9,8 +9,9 @@ def import_class(class_path):
 
 def package_version(name):
     try:
-        version = pkg_resources.get_distribution(name).version
-    except pkg_resources.DistributionNotFound:
+        dist = metadata.distribution(name)
+        version = dist.version
+    except metadata.PackageNotFoundError:
         version = None
 
     return version
