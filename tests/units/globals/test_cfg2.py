@@ -1,8 +1,9 @@
 from easy2use.globals import cfg2
 import unittest
+from unittest import mock
 
 
-def get_option_group():
+def get_option_group() -> cfg2.OptionGroup:
 
     class OptionGroupDemo(cfg2.OptionGroup):
         id = cfg2.Option('id', required=True)
@@ -12,6 +13,28 @@ def get_option_group():
         alive = cfg2.BoolOption('alive', default=True)
 
     return OptionGroupDemo()
+
+def get_option_group_without_required() -> cfg2.OptionGroup:
+
+    class OptionGroupDemo(cfg2.OptionGroup):
+        name = cfg2.Option('name', default='foo')
+        age = cfg2.IntOption('age', default=0)
+        sex = cfg2.Option('sex')
+        alive = cfg2.BoolOption('alive', default=True)
+
+    return OptionGroupDemo()
+
+
+def get_toml_config() -> cfg2.TomlConfig:
+
+    class TomlConfigDemo(cfg2.TomlConfig):
+        debug = cfg2.BoolOption('debug', default=False)
+        log_file = cfg2.Option('log_file')
+        list_option = cfg2.ListOption('list_option')
+        people = get_option_group()
+        people2 = get_option_group_without_required()
+
+    return TomlConfigDemo()
 
 
 class OptionGroupTestCases(unittest.TestCase):
@@ -41,3 +64,43 @@ class OptionGroupTestCases(unittest.TestCase):
     def test_invalid(self):
         self.assertRaises(ValueError, self.group.load_dict,
                           {'id': '1', 'alive': 'not bool'})
+
+
+class TomlConfigTestCases(unittest.TestCase):
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.conf = get_toml_config()
+
+    @mock.patch('toml.load')
+    def test_load(self, mock_load):
+        mock_load.return_value = {
+            'debug': True,
+            'log_file': 'demo.log',
+            'list_option': 'value1',
+            'people': {'id': '00001'},
+        }
+        self.conf.load('demo.conf')
+        self.assertEqual(self.conf.debug, True)
+        self.assertEqual(self.conf.log_file, 'demo.log')
+        self.assertEqual(self.conf.list_option, ['value1'])
+        self.assertEqual(self.conf.people.id, '00001')
+        self.assertEqual(self.conf.people.name, 'foo')
+        self.assertEqual(self.conf.people.age, 0)
+        self.assertEqual(self.conf.people.sex, None)
+        self.assertEqual(self.conf.people.alive, True)
+
+    @mock.patch('toml.load')
+    def test_load_not_in(self, mock_load):
+        mock_load.return_value = {
+            'debug': True,
+            'people': {'id': '00001'},
+        }
+        self.conf.load('demo.conf')
+        self.assertEqual(self.conf.debug, True)
+        self.assertEqual(self.conf.log_file, None)
+        self.assertEqual(self.conf.people.id, '00001')
+        self.assertEqual(self.conf.people.name, 'foo')
+        self.assertEqual(self.conf.people.age, 0)
+        self.assertEqual(self.conf.people.sex, None)
+        self.assertEqual(self.conf.people.alive, True)
