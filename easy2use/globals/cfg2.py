@@ -74,6 +74,10 @@ class OptionGroup(object):
                and attr.value is None:
                 raise ValueError(f'{name} is required')
 
+    def set(self, name: str, value):
+        attr = object.__getattribute__(self, name)
+        attr.set(value)
+
 
 class TomlConfig(object):
 
@@ -81,7 +85,7 @@ class TomlConfig(object):
         attr = object.__getattribute__(self, __name)
         if isinstance(attr, Option):
             return attr.get()
-        return object.__getattribute__(self, __name)
+        return attr
 
     @classmethod
     def load(cls, file):
@@ -95,3 +99,7 @@ class TomlConfig(object):
                 continue
             if k in data:
                 attr.load_dict(data.get(k, {}))
+
+    def set(self, name: str, value):
+        attr = object.__getattribute__(self, name)
+        attr.set(value)

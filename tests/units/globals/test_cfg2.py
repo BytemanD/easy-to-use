@@ -14,6 +14,7 @@ def get_option_group() -> cfg2.OptionGroup:
 
     return OptionGroupDemo()
 
+
 def get_option_group_without_required() -> cfg2.OptionGroup:
 
     class OptionGroupDemo(cfg2.OptionGroup):
@@ -65,6 +66,12 @@ class OptionGroupTestCases(unittest.TestCase):
         self.assertRaises(ValueError, self.group.load_dict,
                           {'id': '1', 'alive': 'not bool'})
 
+    def test_set(self):
+        self.group.set('name', 'bar')
+        self.group.set('age', '123')
+        self.assertEqual(self.group.name, 'bar')
+        self.assertEqual(self.group.age, 123)
+
 
 class TomlConfigTestCases(unittest.TestCase):
 
@@ -104,3 +111,12 @@ class TomlConfigTestCases(unittest.TestCase):
         self.assertEqual(self.conf.people.age, 0)
         self.assertEqual(self.conf.people.sex, None)
         self.assertEqual(self.conf.people.alive, True)
+
+    def test_set(self):
+        self.conf.set('debug', True)
+        self.assertEqual(self.conf.debug, True)
+
+        self.conf.people.set('name', 'bar')
+        self.conf.people.set('age', '123')
+        self.assertEqual(self.conf.people.name, 'bar')
+        self.assertEqual(self.conf.people.age, 123)
