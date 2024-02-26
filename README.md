@@ -7,3 +7,7 @@
 ```
 python3 -m pip wheel --prefer-binary --no-deps --wheel-dir=dist ./
 ```
+或
+```
+python -m build
+```
