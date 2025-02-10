@@ -124,7 +124,7 @@ def main():
     Usage:
         python -m easy2use.code
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Random String Generator")
     parser.add_argument('-l', '--lower', type=int, default=4)
     parser.add_argument('-u', '--upper', type=int)
     parser.add_argument('-n', '--number', type=int)
